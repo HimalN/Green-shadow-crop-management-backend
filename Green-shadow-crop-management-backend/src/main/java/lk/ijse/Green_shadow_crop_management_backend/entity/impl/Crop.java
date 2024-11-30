@@ -1,7 +1,7 @@
 package lk.ijse.Green_shadow_crop_management_backend.entity.impl;
 
 import jakarta.persistence.*;
-import lk.ijse.Green_shadow_crop_management_backend.entity.superEntity;
+import lk.ijse.Green_shadow_crop_management_backend.entity.SuperEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "crop")
-public class Crop implements superEntity {
+public class Crop implements SuperEntity {
     @Id
     private String cropCode;
     private String commonName;

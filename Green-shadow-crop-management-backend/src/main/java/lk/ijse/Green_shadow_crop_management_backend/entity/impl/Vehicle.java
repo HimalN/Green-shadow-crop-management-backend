@@ -1,7 +1,7 @@
 package lk.ijse.Green_shadow_crop_management_backend.entity.impl;
 
 import jakarta.persistence.*;
-import lk.ijse.greenshadowbackend.entity.SuperEntity;
+import lk.ijse.Green_shadow_crop_management_backend.entity.SuperEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
