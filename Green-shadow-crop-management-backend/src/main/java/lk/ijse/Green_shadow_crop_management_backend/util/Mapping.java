@@ -16,13 +16,9 @@ public class Mapping {
     private ModelMapper modelMapper;
 
     /*for field mapping*/
-    public Field toFieldEntity(FieldDTO fieldDto) {
-        return modelMapper.map(fieldDto, Field.class);
-    }
-    public FieldDTO toFieldDto(Field fieldEntity) {
+    public Field toFieldEntity(FieldDTO fieldDto) {return modelMapper.map(fieldDto, Field.class);}
+    public FieldDTO toFieldDTO(Field fieldEntity) {
         return modelMapper.map(fieldEntity, FieldDTO.class);
     }
-    public List<FieldDTO> toAllFields(List<Field> fieldEntityList) {
-        return modelMapper.map(fieldEntityList, new TypeToken<List<FieldDTO>>() {}.getType());
-    }
+    public List<FieldDTO> asFieldDTOList(List<Field> fieldEntities) {return modelMapper.map(fieldEntities, new TypeToken<List<FieldDTO>>() {}.getType());}
 }

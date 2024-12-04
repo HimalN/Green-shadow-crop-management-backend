@@ -4,11 +4,12 @@ import lk.ijse.Green_shadow_crop_management_backend.DataPersistException;
 import lk.ijse.Green_shadow_crop_management_backend.customStatusCodes.SelectedFieldErrorStatus;
 import lk.ijse.Green_shadow_crop_management_backend.dto.FieldStatus;
 import lk.ijse.Green_shadow_crop_management_backend.dto.impl.FieldDTO;
-import lk.ijse.Green_shadow_crop_management_backend.entity.impl.Field;
 import lk.ijse.Green_shadow_crop_management_backend.exception.CropNotFoundException;
 import lk.ijse.Green_shadow_crop_management_backend.service.FieldService;
 import lk.ijse.Green_shadow_crop_management_backend.util.AppUtil;
 import lk.ijse.Green_shadow_crop_management_backend.util.RegexProcess;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,18 +20,21 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.print.attribute.standard.Media;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:63342")
 @RestController
 @RequestMapping("api/v1/fields")
 public class FieldController {
+
     @Autowired
     private FieldService fieldService;
 
+    static Logger logger =  LoggerFactory.getLogger(FieldController.class);
+
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void>saveField(
             @RequestPart("fieldCode") String fieldCode,
-            @RequestPart("filedName") String fieldName,
+            @RequestPart("fieldName") String fieldName,
             @RequestPart("location") String location,
             @RequestPart("extent") String extent,
             @RequestPart("fieldImage1")MultipartFile filedImage1,
@@ -46,20 +50,22 @@ public class FieldController {
             base64fieldImage2 = AppUtil.picToBase64(imageBytes2);
 
             if(!RegexProcess.fieldCodeMatcher(fieldCode)){
+                logger.error("Invalid field code");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             if (!RegexProcess.fieldNameMatcher(fieldName)){
+                logger.error("Invalid field name");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             if (!RegexProcess.fieldLocationMatcher(location)){
+                logger.error("Invalid field location");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             if (!RegexProcess.fieldExtentMatcher(extent)){
+                logger.error("Invalid field extent");
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-
-            System.out.println(fieldCode);
             FieldDTO fieldDTO = new FieldDTO();
             fieldDTO.setFieldCode(fieldCode);
             fieldDTO.setFieldName(fieldName);
@@ -75,33 +81,20 @@ public class FieldController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping(value = "/{fieldId}",produces = MediaType.APPLICATION_JSON_VALUE)
-    public FieldStatus getSelectedField(@PathVariable ("fieldId") String fieldId){
-        if (!RegexProcess.fieldCodeMatcher(fieldId)){
+
+    @GetMapping(value = "/{fieldID}",produces = MediaType.APPLICATION_JSON_VALUE)
+    public FieldStatus getSelectedField(@PathVariable ("fieldID") String fieldId){
+        if (!RegexProcess.fieldCodeMatcher(fieldId)) {
             return new SelectedFieldErrorStatus(1,"Field ID is not valid");
         }
         return fieldService.getField(fieldId);
     }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FieldDTO>getAllFields(){
+    public List<FieldDTO> getAllFields() {
         return fieldService.getAllFields();
     }
-    @DeleteMapping(value = "/{fieldId}")
-    public ResponseEntity<Void> deleteField(@PathVariable ("fieldId") String fieldId){
-        try {
-            if (RegexProcess.fieldCodeMatcher(fieldId)) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-            fieldService.deleteField(fieldId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }catch (CropNotFoundException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateField(
@@ -148,4 +141,20 @@ public class FieldController {
         }
     }
 
+    @DeleteMapping(value = "/{fieldId}")
+    public ResponseEntity<Void> deleteField(@PathVariable ("fieldId") String fieldId) {
+        try {
+            if (!RegexProcess.fieldCodeMatcher(fieldId)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            fieldService.deleteField(fieldId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (CropNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
