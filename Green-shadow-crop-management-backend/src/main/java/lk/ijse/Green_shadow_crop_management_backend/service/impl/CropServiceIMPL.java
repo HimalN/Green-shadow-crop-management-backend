@@ -6,12 +6,15 @@ import lk.ijse.Green_shadow_crop_management_backend.dao.CorpDAO;
 import lk.ijse.Green_shadow_crop_management_backend.dto.CropStatus;
 import lk.ijse.Green_shadow_crop_management_backend.dto.impl.CropDTO;
 import lk.ijse.Green_shadow_crop_management_backend.entity.impl.Crop;
+import lk.ijse.Green_shadow_crop_management_backend.exception.CropNotFoundException;
 import lk.ijse.Green_shadow_crop_management_backend.service.CropService;
 import lk.ijse.Green_shadow_crop_management_backend.util.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
 public class CropServiceIMPL implements CropService {
@@ -46,7 +49,12 @@ public class CropServiceIMPL implements CropService {
 
     @Override
     public void deleteCrop(String cropId) {
-
+        Optional<Crop> byCropId = cropDAO.findById(cropId);
+        if (!byCropId.isPresent()) {
+            throw new CropNotFoundException("Crop not found");
+        }else {
+            cropDAO.deleteById(cropId);
+        }
     }
 
     @Override
