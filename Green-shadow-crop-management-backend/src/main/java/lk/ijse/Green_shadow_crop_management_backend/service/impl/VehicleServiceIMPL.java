@@ -6,12 +6,14 @@ import lk.ijse.Green_shadow_crop_management_backend.dao.VehicleDAO;
 import lk.ijse.Green_shadow_crop_management_backend.dto.VehicleStatus;
 import lk.ijse.Green_shadow_crop_management_backend.dto.impl.VehicleDTO;
 import lk.ijse.Green_shadow_crop_management_backend.entity.impl.Vehicle;
+import lk.ijse.Green_shadow_crop_management_backend.exception.VehicleNotFoundException;
 import lk.ijse.Green_shadow_crop_management_backend.service.VehicleService;
 import lk.ijse.Green_shadow_crop_management_backend.util.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -48,7 +50,12 @@ public class VehicleServiceIMPL implements VehicleService {
 
     @Override
     public void deleteVehicle(String vehicleId) {
-
+        Optional<Vehicle> byVehicleId = vehicleDAO.findById(vehicleId);
+        if (!byVehicleId.isPresent()) {
+            throw new VehicleNotFoundException("Vehicle not found");
+        }else {
+            vehicleDAO.deleteById(vehicleId);
+        }
     }
 
     @Override
