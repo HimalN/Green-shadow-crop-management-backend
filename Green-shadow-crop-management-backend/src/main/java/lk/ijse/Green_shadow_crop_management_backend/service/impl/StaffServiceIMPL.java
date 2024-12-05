@@ -6,12 +6,14 @@ import lk.ijse.Green_shadow_crop_management_backend.dao.StaffDAO;
 import lk.ijse.Green_shadow_crop_management_backend.dto.StaffStatus;
 import lk.ijse.Green_shadow_crop_management_backend.dto.impl.StaffDTO;
 import lk.ijse.Green_shadow_crop_management_backend.entity.impl.Staff;
+import lk.ijse.Green_shadow_crop_management_backend.exception.StaffNotFoundException;
 import lk.ijse.Green_shadow_crop_management_backend.service.StaffService;
 import lk.ijse.Green_shadow_crop_management_backend.util.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Transactional
@@ -48,7 +50,12 @@ public class StaffServiceIMPL implements StaffService {
 
     @Override
     public void deleteStaff(String staffId) {
-
+        Optional<Staff> byStaffId = staffDAO.findById(staffId);
+        if (!byStaffId.isPresent()) {
+            throw new StaffNotFoundException("Staff not found");
+        }else {
+            staffDAO.deleteById(staffId);
+        }
     }
 
     @Override

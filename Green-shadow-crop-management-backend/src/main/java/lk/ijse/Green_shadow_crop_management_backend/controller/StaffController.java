@@ -7,6 +7,7 @@ import lk.ijse.Green_shadow_crop_management_backend.dto.StaffStatus;
 import lk.ijse.Green_shadow_crop_management_backend.dto.impl.StaffDTO;
 import lk.ijse.Green_shadow_crop_management_backend.entity.Gender;
 import lk.ijse.Green_shadow_crop_management_backend.entity.Role;
+import lk.ijse.Green_shadow_crop_management_backend.exception.StaffNotFoundException;
 import lk.ijse.Green_shadow_crop_management_backend.service.StaffService;
 import lk.ijse.Green_shadow_crop_management_backend.util.RegexProcess;
 import org.slf4j.Logger;
@@ -89,5 +90,22 @@ public class StaffController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<StaffDTO> getAllStaffs() {
         return staffService.getAllStaffs();
+    }
+
+    @DeleteMapping(value = "/{staffId}")
+    public ResponseEntity<Void> deleteStaff(@PathVariable("staffId") String staffId) {
+        try {
+            if (!RegexProcess.staffIdMatcher(staffId)) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            staffService.deleteStaff(staffId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (StaffNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
