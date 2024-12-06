@@ -16,6 +16,16 @@ public class Mapping {
     private ModelMapper modelMapper;
 
     /*for field mapping*/
+    public User toUserEntity(UserDTO userDTO) {
+        return modelMapper.map(userDTO, User.class);
+    }
+    public UserDTO toUserDTO(User userEntity) {
+        return modelMapper.map(userEntity, UserDTO.class);
+    }
+    public List<UserDTO> asUserDTOList(List<User> userEntities) {
+        return modelMapper.map(userEntities, new TypeToken<List<UserDTO>>() {}.getType());
+    }
+
     public Field toFieldEntity(FieldDTO fieldDto) {return modelMapper.map(fieldDto, Field.class);}
     public FieldDTO toFieldDTO(Field fieldEntity) {
         return modelMapper.map(fieldEntity, FieldDTO.class);
@@ -60,5 +70,15 @@ public class Mapping {
     }
     public List<EquipmentDTO> asEquipmentDTOList(List<Equipment> equipmentEntities) {
         return modelMapper.map(equipmentEntities, new TypeToken<List<EquipmentDTO>>() {}.getType());
+    }
+
+    public Log toLogEntity(LogDTO logDTO) {
+        return modelMapper.map(logDTO, Log.class);
+    }
+    public LogDTO toLogDTO(Log logEntity) {
+        return modelMapper.map(logEntity, LogDTO.class);
+    }
+    public List<LogDTO> asLogDTOList(List<Log> logEntities) {
+        return modelMapper.map(logEntities, new TypeToken<List<LogDTO>>() {}.getType());
     }
 }
